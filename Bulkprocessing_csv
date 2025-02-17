@@ -6,13 +6,13 @@ from tkinter import filedialog, messagebox
 
 def process_fixed_width_files(folder_path, config_path):
     """
-    處理資料夾中的檔案，根據固定寬度分割規則和欄位命名進行處理。
-    
-    :param folder_path: 資料夾路徑
-    :param config_path: JSON 設定檔路徑
+    Process files in a folder based on fixed width split rules and column naming specified in a JSON config file.
+
+    :param folder_path: Path to the folder containing the files
+    :param config_path: Path to the JSON configuration file
     """
     try:
-        # 讀取設定檔
+        # Load the configuration file
         with open(config_path, 'r') as f:
             config = json.load(f)
 
@@ -26,38 +26,38 @@ def process_fixed_width_files(folder_path, config_path):
                 columns = config[file_name]["columns"]
 
                 try:
-                    # 使用固定寬度讀取檔案
+                    # Read the file using fixed width format
                     df = pd.read_fwf(file_path, widths=widths, header=None)
                     df.columns = columns
 
-                    # 儲存處理後的檔案
+                    # Save the processed file
                     processed_file_path = os.path.join(folder_path, f"processed_{file_name}")
                     df.to_csv(processed_file_path, index=False)
-                    print(f"已處理並存檔: {processed_file_path}")
+                    print(f"Processed and saved: {processed_file_path}")
                 except Exception as e:
-                    messagebox.showerror("錯誤", f"處理檔案 {file_name} 時發生錯誤: {e}")
+                    messagebox.showerror("Error", f"Error processing file {file_name}: {e}")
 
-        messagebox.showinfo("完成", "所有檔案已處理完成！")
+        messagebox.showinfo("Completed", "All files have been processed successfully!")
     except Exception as e:
-        messagebox.showerror("錯誤", f"讀取設定檔時發生錯誤: {e}")
+        messagebox.showerror("Error", f"Error reading the configuration file: {e}")
 
 def select_folder_and_process():
-    folder_path = filedialog.askdirectory(title="選擇資料夾")
+    folder_path = filedialog.askdirectory(title="Select Folder")
     if folder_path:
-        config_path = filedialog.askopenfilename(title="選擇設定檔", filetypes=[("JSON files", "*.json")])
+        config_path = filedialog.askopenfilename(title="Select Config File", filetypes=[("JSON files", "*.json")])
         if config_path:
             process_fixed_width_files(folder_path, config_path)
 
-# 建立 GUI 視窗
+# Create GUI window
 root = tk.Tk()
-root.title("固定寬度檔案處理工具")
+root.title("Fixed Width File Processor")
 root.geometry("400x200")
 
-label = tk.Label(root, text="請選擇包含要處理檔案的資料夾和設定檔", font=("Arial", 12))
+label = tk.Label(root, text="Select a folder containing files and a config file", font=("Arial", 12))
 label.pack(pady=20)
 
-select_button = tk.Button(root, text="選擇資料夾並處理", font=("Arial", 12), command=select_folder_and_process)
+select_button = tk.Button(root, text="Select Folder and Process", font=("Arial", 12), command=select_folder_and_process)
 select_button.pack(pady=20)
 
-# 啟動主迴圈
+# Start the main loop
 root.mainloop()
