@@ -1,0 +1,10 @@
+{
+  "file1.csv": {
+    "delimiter": ",",
+    "columns": ["col1", "col2", "col3"]
+  },
+  "file2.csv": {
+    "delimiter": "\\t",
+    "columns": ["colA", "colB"]
+  }
+}
