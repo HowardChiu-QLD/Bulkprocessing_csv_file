@@ -1,0 +1,56 @@
+import os
+import pandas as pd
+import json
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
+def process_files_in_folder(folder_path, config_path):
+    try:
+
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        
+        files = os.listdir(folder_path)
+        
+        for file_name in files:
+            file_path = os.path.join(folder_path, file_name)
+            
+            if os.path.isfile(file_path) and file_name in config:
+                delimiter = config[file_name]["delimiter"]
+                columns = config[file_name]["columns"]
+                
+                try:
+
+                    df = pd.read_csv(file_path, sep=delimiter, header=None)
+                    df.columns = columns
+                    
+
+                    processed_file_path = os.path.join(folder_path, f"processed_{file_name}")
+                    df.to_csv(processed_file_path, index=False)
+                    print(f"Processed and saved: {processed_file_path}")
+                except Exception as e:
+                    messagebox.showerror("Error", f"When Processing {file_name} : {e}")
+        
+        messagebox.showinfo("Completed", "All files been proceed！")
+    except Exception as e:
+        messagebox.showerror("Error", f"Error when reading config: {e}")
+
+def select_folder_and_process():
+    folder_path = filedialog.askdirectory(title="Select folder")
+    if folder_path:
+        config_path = filedialog.askopenfilename(title="select config", filetypes=[("JSON files", "*.json")])
+        if config_path:
+            process_files_in_folder(folder_path, config_path)
+
+#Build GUI
+root = tk.Tk()
+root.title("file processing tool")
+root.geometry("400x200")
+
+label = tk.Label(root, text="Please select folder and config you need to process", font=("Arial", 12))
+label.pack(pady=20)
+
+select_button = tk.Button(root, text="Select and process the folder", font=("Arial", 12), command=select_folder_and_process)
+select_button.pack(pady=20)
+
+root.mainloop()
